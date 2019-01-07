@@ -21,7 +21,7 @@ class Portfolio
         double sum = 0;
         for (auto i = portfolioValues.begin(); i < portfolioValues.end(); i++)
         {
-            sum += i->percentage * i->value->calcReturns(i->investStart, i->investEnd, i->investedStart);
+            sum += i->percentage * i->value.calcReturns(i->investStart, i->investEnd, i->investedStart);
         }
         return sum;
     }

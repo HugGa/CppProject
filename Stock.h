@@ -45,6 +45,11 @@ class Stock
     // THIS FUNCTION DOES IT BASED ON ACTUAL YEARS INPUT
     inline double calcReturns(int start, int end, double invested)
     {
+        return 0.0;
+    }
+    inline double operator[](int year)
+    {
+        return yearPercents[year];
     }
 };
 } // namespace Hugh
