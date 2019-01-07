@@ -1,6 +1,8 @@
 #pragma once
 #include <map>
 #include <vector>
+#include <limits>
+#include <stdexcept>
 namespace Hugh
 {
 class Stock
@@ -42,14 +44,32 @@ class Stock
     {
         return Percents[index];
     }
-    // THIS FUNCTION DOES IT BASED ON ACTUAL YEARS INPUT
-    inline double calcReturns(int start, int end, double invested)
+    // THIS FUNCTION DOES IT BASED ON YEARS OFFSET INPUT
+    // MAX DOUBLE = ERROR
+    inline double calcReturns(size_t start, size_t end, double invested)
     {
-        return 0.0;
+        if(end > Percents.size())
+        {
+            throw std::out_of_range("End is past beginning");
+        }
+        for(size_t i = start; i < end; i++)
+        {
+            double multi = Percents[i];
+            if(!signbit(multi))
+            {
+                multi++;
+            }
+            else
+            {
+                multi = std::abs(1 / multi);
+            }
+            invested *= multi;
+        }
+        return invested;
     }
     inline double operator[](int year)
     {
-        return yearPercents[year];
+        return Percents[year];
     }
 };
 } // namespace Hugh
