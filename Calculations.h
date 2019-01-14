@@ -45,6 +45,10 @@ inline double Covariance(Stock stock1, Stock stock2, size_t datasize)
     }
     return sum / (datasize - 1);
 }
+inline double Correlation(Stock stock1, Stock stock2, size_t dataSize)
+{
+    return Covariance(stock1, stock2, dataSize) / (Stddev(stock1) * Stddev(stock2));
+}
 // calculates compound annual return based on years, starting, and ending
 inline double CalcCAGR(int years, double start, double ending)
 {
