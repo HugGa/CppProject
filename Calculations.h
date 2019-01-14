@@ -1,25 +1,18 @@
 #pragma once
 #include <cmath>
+#include <numeric>
 #include "Returns.h"
 namespace Hugh
 {
 inline double average(Stock stock)
 {
-    double sum = 0;
-    for (auto i = stock.begin(); i < stock.end(); i++)
-    {
-        sum += *i;
-    }
-    return sum / stock.size();
+    return std::accumulate(stock.begin(), stock.end(), 0) / stock.size();
 }
 inline double average(Stock stock, size_t size)
 {
-    double sum = 0;
-    for (size_t i = 0; i < size; i++)
-    {
-        sum += stock[i];
-    }
-    return sum / size;
+    auto advanced = stock.begin();
+    std::advance(advanced, size);
+    return std::accumulate(stock.begin(), advanced, 0) / size;
 }
 inline double Variance(Stock stock)
 {
@@ -31,9 +24,23 @@ inline double Variance(Stock stock)
     }
     return sum / stock.size();
 }
+inline double Variance(Stock stock, size_t datasize)
+{
+    double avg = average(stock, datasize);
+    double sum = 0;
+    for (size_t i = 0; i < datasize; i++)
+    {
+        sum += pow(stock[i] - avg, 2);
+    }
+    return sum;
+}
 inline double Stddev(Stock stock)
 {
     return sqrt(Variance(stock));
+}
+inline double Stddev(Stock stock, size_t datasize)
+{
+    return sqrt(Variance(stock, datasize));
 }
 inline double Covariance(Stock stock1, Stock stock2, size_t datasize)
 {
