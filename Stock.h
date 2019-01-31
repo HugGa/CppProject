@@ -3,6 +3,7 @@
 #include <vector>
 #include <limits>
 #include <stdexcept>
+#include <cassert>
 namespace Hugh
 {
 class Stock
@@ -44,18 +45,20 @@ class Stock
     {
         return Percents[index];
     }
+    inline double logReturns(size_t start, size_t end, double invested)
+    {
+        assert(end > Percents.size() && "End is past beginning");
+        return log(calcReturns(start, end, invested) / invested);
+    }
     // THIS FUNCTION DOES IT BASED ON YEARS OFFSET INPUT
     // MAX DOUBLE = ERROR
     inline double calcReturns(size_t start, size_t end, double invested)
     {
-        if(end > Percents.size())
-        {
-            throw std::out_of_range("End is past beginning");
-        }
-        for(size_t i = start; i < end; i++)
+        assert(end > Percents.size() && "End is past beginning");
+        for (size_t i = start; i < end; i++)
         {
             double multi = Percents[i];
-            if(!signbit(multi))
+            if (!signbit(multi))
             {
                 multi++;
             }
