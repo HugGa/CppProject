@@ -4,6 +4,9 @@
 #include <limits>
 #include <stdexcept>
 #include <cassert>
+#include <fstream>
+#include <string>
+#include <iostream>
 namespace Hugh
 {
 class Stock
@@ -14,6 +17,34 @@ class Stock
     int endYear;
 
   public:
+    Stock(std::string table)
+    {
+        std::ifstream file(table);
+        if (!file.is_open())
+        {
+            throw std::exception("Stuff");
+        }
+        while (!file.eof())
+        {
+            int year;
+            file >> year;
+            file.get();
+            double val;
+            file >> val;
+            file.get();
+            yearPercents[year] = val;
+        }
+        Percents.resize(yearPercents.size());
+        Percents[0] = 0;
+        auto begin = yearPercents.begin();
+        auto begin2 = yearPercents.begin();
+        std::advance(begin2, 1);
+        auto end = yearPercents.end();
+        for (int i = 1; i < yearPercents.size() && begin2 != end; i++, begin++, begin2++)
+        {
+            Percents[i] = ((begin2->second - begin->second) / begin->second) * 100;
+        }
+    }
     inline int getStartYear()
     {
         return startYear;
@@ -23,9 +54,18 @@ class Stock
         return endYear;
     }
     using percent_iterator = std::vector<double>::iterator;
+    using cr_percent_iterator = std::vector<double>::reverse_iterator;
     inline percent_iterator begin()
     {
         return Percents.begin();
+    }
+    inline auto crbegin() -> decltype(Percents.crbegin())
+    {
+        return Percents.crbegin();
+    }
+    inline auto crend() -> decltype(Percents.crbegin())
+    {
+        return Percents.crend();
     }
     inline percent_iterator end()
     {
@@ -55,24 +95,15 @@ class Stock
     inline double calcReturns(size_t start, size_t end, double invested)
     {
         assert(end > Percents.size() && "End is past beginning");
-        for (size_t i = start; i < end; i++)
-        {
-            double multi = Percents[i];
-            if (!signbit(multi))
-            {
-                multi++;
-            }
-            else
-            {
-                multi = std::abs(1 / multi);
-            }
-            invested *= multi;
-        }
-        return invested;
+        return invested * (Percents[end] - Percents[start]) / (end - start);
     }
     inline double operator[](int year)
     {
         return Percents[year];
+    }
+    inline double at(int year)
+    {
+        return yearPercents[year];
     }
 };
 } // namespace Hugh
